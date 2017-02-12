@@ -36,13 +36,8 @@
         
         addCube(x, z) {
           var geometry = new THREE.BoxGeometry(1, 1, 1);
-          var material = new THREE.MeshNormalMaterial();
-          var mesh = new THREE.Mesh(geometry, material);
-          var cube = new THREE.BoxHelper(mesh);
-          cube.material.color.set(0x00ff00);
+          var cube = this.buildShape(geometry, x, z);
           cube.rotation.y += 2;
-          cube.position.x = x;
-          cube.position.z = z;
           this.scene.add(cube);
           return cube;
         }
@@ -63,12 +58,8 @@
             new THREE.Face3(3, 4, 2),
             new THREE.Face3(0, 4, 3));
           
-          var edges = new THREE.EdgesGeometry(geometry);
-          var material = new THREE.LineBasicMaterial({color: 0x00ff00});
-          var pyramid = new THREE.LineSegments(edges, material);
-          pyramid.position.x = x;
+          var pyramid = this.buildShape(geometry, x, z);
           pyramid.position.y = -0.5;
-          pyramid.position.z = z;
           this.scene.add(pyramid);
           return pyramid;
         }
@@ -76,7 +67,16 @@
         render() {
           requestAnimationFrame(this.render);
           this.renderer.render(this.scene, this.camera);
-        };
+        }
+        
+        buildShape(geometry, x, z) {
+          var edges = new THREE.EdgesGeometry(geometry);
+          var material = new THREE.LineBasicMaterial({color: 0x00ff00});
+          var shape = new THREE.LineSegments(edges, material);
+          shape.position.x = x;
+          shape.position.z = z;
+          return shape;
+        }
       
         handleInput(sender, e) {
           var theta = sender.camera.rotation.y - Math.PI;
