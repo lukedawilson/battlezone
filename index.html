@@ -31,12 +31,12 @@
           document.body.appendChild(this.renderer.domElement);
           
           var self = this;
-          document.onkeydown = e => self.handleInput(self, e);
+          document.onkeydown = e => self._handleInput(self, e);
         }
         
         addCube(x, z) {
           var geometry = new THREE.BoxGeometry(1, 1, 1);
-          var cube = this.buildShape(geometry, x, z);
+          var cube = this._buildShape(geometry, x, z);
           cube.rotation.y += 2;
           this.scene.add(cube);
           return cube;
@@ -58,18 +58,24 @@
             new THREE.Face3(3, 4, 2),
             new THREE.Face3(0, 4, 3));
           
-          var pyramid = this.buildShape(geometry, x, z);
+          var pyramid = this._buildShape(geometry, x, z);
           pyramid.position.y = -0.5;
           this.scene.add(pyramid);
           return pyramid;
         }
         
-        render() {
-          requestAnimationFrame(this.render);
+        gameLoop(refreshRateMs = 50) {
+          setInterval(() => {
+            this._render();
+          }, refreshRateMs);
+        }
+        
+        _render() {
+          requestAnimationFrame(this._render);
           this.renderer.render(this.scene, this.camera);
         }
         
-        buildShape(geometry, x, z) {
+        _buildShape(geometry, x, z) {
           var edges = new THREE.EdgesGeometry(geometry);
           var material = new THREE.LineBasicMaterial({color: 0x00ff00});
           var shape = new THREE.LineSegments(edges, material);
@@ -78,7 +84,7 @@
           return shape;
         }
       
-        handleInput(sender, e) {
+        _handleInput(sender, e) {
           var theta = sender.camera.rotation.y - Math.PI;
           var hyp = .1;
           var opp = hyp * Math.sin(theta);
@@ -100,8 +106,6 @@
               sender.camera.rotation.y -= .1;
               break;  
           }
-          
-          sender.render();
         }
       }
       
@@ -110,7 +114,7 @@
       game.addCube(-3, 2.5);
       game.addCube(-1, 0);
       game.addPyramid(-2, -4);
-      game.render();
+      game.gameLoop();
     </script>
    </body>
 </html>
