@@ -9,7 +9,18 @@ castle could be found. Of course, these legends weren't true, but what if they w
 **This is a work in progress.**
 
 ## Running the game
-Simply open `index.html` in the browser.
+
+```bash
+npm start
+```
+
+## Bundling
+
+```bash
+npm run build
+```
+
+Artefacts will appear in the `dist/` directory.
 
 ## Current state
 
