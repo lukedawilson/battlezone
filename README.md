@@ -6,7 +6,7 @@ Battlezone's (then) unique 3D environment inspired a number of
 including the possibility to drive away from the battlefield and into the volcano, where a
 castle could be found. Of course, these legends weren't true, but what if they were?
 
-** This is a work in progress. **
+**This is a work in progress.**
 
 ## Running the game
 
