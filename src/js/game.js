@@ -1,7 +1,7 @@
+const LIGHT_GREEN = 0x00ff00
+
 class Game {
   constructor(width, height) {
-    this.LIGHT_GREEN = 0x00ff00
-
     this.counter = 1
 
     this.width = width
@@ -17,7 +17,7 @@ class Game {
     this.renderer.setSize(width, height)
     document.body.appendChild(this.renderer.domElement)
 
-    /*const material = new THREE.LineBasicMaterial({ color: this.LIGHT_GREEN })
+    /*const material = new THREE.LineBasicMaterial({ color: LIGHT_GREEN })
     const geometry = new THREE.Geometry()
     geometry.vertices.push(new THREE.Vector3(-2, 0, -3))
     geometry.vertices.push(new THREE.Vector3(0, 2, -3))
@@ -72,7 +72,7 @@ class Game {
 
   _buildShape(geometry, x, z) {
     const edges = new THREE.EdgesGeometry(geometry)
-    const material = new THREE.LineBasicMaterial({color: this.LIGHT_GREEN})
+    const material = new THREE.LineBasicMaterial({color: LIGHT_GREEN})
     const shape = new THREE.LineSegments(edges, material)
     shape.position.x = x
     shape.position.z = z
