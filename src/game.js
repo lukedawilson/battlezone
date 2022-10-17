@@ -12,20 +12,14 @@ class Game {
     this.scene = new THREE.Scene()
 
     this.camera = new THREE.PerspectiveCamera(75, width/height, 0.1, 1000)
-    this.camera.position.z = -5
     this.camera.rotation.y += Math.PI
 
     this.renderer = new THREE.WebGLRenderer()
     this.renderer.setSize(width, height)
     document.body.appendChild(this.renderer.domElement)
 
-    /*const material = new THREE.LineBasicMaterial({ color: LIGHT_GREEN })
-    const geometry = new THREE.Geometry()
-    geometry.vertices.push(new THREE.Vector3(-2, 0, -3))
-    geometry.vertices.push(new THREE.Vector3(0, 2, -3))
-    geometry.vertices.push(new THREE.Vector3(2, 0, -3))
-    const line = new THREE.Line(geometry, material)
-    this.camera.add(line)*/
+    const horizon = this._createHorizon()
+    this.scene.add(horizon)
 
     const self = this
     document.onkeydown = e => self._handleInput(self, e)
@@ -126,6 +120,21 @@ class Game {
         break
     }
   }
+
+  _createHorizon() {
+    const radius = 100
+    const segments = 64
+
+    const material = new THREE.LineBasicMaterial({ color: LIGHT_GREEN })
+    const geometry = new THREE.CircleGeometry(radius, segments)
+
+    // Remove center vertex
+    geometry.vertices.shift()
+    geometry.rotateX(Math.PI / 2)
+
+    return new THREE.Line(geometry, material)
+  }
 }
 
 window.Game = Game
+
