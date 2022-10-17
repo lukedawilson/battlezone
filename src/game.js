@@ -28,15 +28,16 @@ class Game {
     const radius = 100
     const segments = 64
 
-    const material = new THREE.LineBasicMaterial({ color: LIGHT_GREEN })
-    const geometry = new THREE.CircleGeometry(radius, segments)
+    // Horizon
+    const horizonGeometry = new THREE.CircleGeometry(radius, segments)
+    horizonGeometry.vertices.shift() // remove centre vertex
+    horizonGeometry.rotateX(Math.PI / 2)
 
-    // Remove center vertex
-    geometry.vertices.shift()
-    geometry.rotateX(Math.PI / 2)
-
-    const horizon = new THREE.Line(geometry, material)
+    const horizon = this._buildShape(horizonGeometry, 0, 0)
     this.scene.add(horizon)
+
+    // Volcano
+    this.addPyramid(0, 350, 500, 250)
   }
 
   addCube(x, z) {
@@ -47,7 +48,7 @@ class Game {
     return cube
   }
 
-  addPyramid(x, z) {
+  addPyramid(x, z, width = 1, height = 1) {
     const geometry = new THREE.Geometry()
     geometry.vertices.push(
       new THREE.Vector3(0, 0, 0),
@@ -62,6 +63,8 @@ class Game {
       new THREE.Face3(2, 4, 1),
       new THREE.Face3(3, 4, 2),
       new THREE.Face3(0, 4, 3))
+    const transformation = new THREE.Matrix4().makeScale(width, height, width)
+    geometry.applyMatrix(transformation)
 
     const pyramid = this._buildShape(geometry, x, z)
     pyramid.position.y = -0.5
@@ -133,6 +136,7 @@ class Game {
         sender.camera.rotation.y -= .1
         break
     }
+    console.log(`x: ${sender.camera.position.x}, y: ${sender.camera.position.y}, z: ${sender.camera.position.z}`)
   }
 }
 
