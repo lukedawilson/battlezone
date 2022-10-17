@@ -25,11 +25,8 @@ class Game {
   }
 
   addHorizon() {
-    const radius = 100
-    const segments = 64
-
     // Horizon
-    const horizonGeometry = new THREE.CircleGeometry(radius, segments)
+    const horizonGeometry = new THREE.CircleGeometry(1000, 64)
     horizonGeometry.vertices.shift() // remove centre vertex
     horizonGeometry.rotateX(Math.PI / 2)
 
