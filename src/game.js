@@ -18,11 +18,25 @@ class Game {
     this.renderer.setSize(width, height)
     document.body.appendChild(this.renderer.domElement)
 
-    const horizon = this._createHorizon()
-    this.scene.add(horizon)
+    this.addHorizon()
 
     const self = this
     document.onkeydown = e => self._handleInput(self, e)
+  }
+
+  addHorizon() {
+    const radius = 100
+    const segments = 64
+
+    const material = new THREE.LineBasicMaterial({ color: LIGHT_GREEN })
+    const geometry = new THREE.CircleGeometry(radius, segments)
+
+    // Remove center vertex
+    geometry.vertices.shift()
+    geometry.rotateX(Math.PI / 2)
+
+    const horizon = new THREE.Line(geometry, material)
+    this.scene.add(horizon)
   }
 
   addCube(x, z) {
@@ -119,20 +133,6 @@ class Game {
         sender.camera.rotation.y -= .1
         break
     }
-  }
-
-  _createHorizon() {
-    const radius = 100
-    const segments = 64
-
-    const material = new THREE.LineBasicMaterial({ color: LIGHT_GREEN })
-    const geometry = new THREE.CircleGeometry(radius, segments)
-
-    // Remove center vertex
-    geometry.vertices.shift()
-    geometry.rotateX(Math.PI / 2)
-
-    return new THREE.Line(geometry, material)
   }
 }
 
