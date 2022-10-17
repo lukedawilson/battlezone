@@ -1,3 +1,5 @@
+const THREE = require('three')
+
 const LIGHT_GREEN = 0x00ff00
 
 class Game {
@@ -125,3 +127,5 @@ class Game {
     }
   }
 }
+
+window.Game = Game

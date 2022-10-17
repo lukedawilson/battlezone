@@ -1,11 +1,8 @@
 {
-  "name": "battlezone-legends",
-  "source": "src/index.html",
   "scripts": {
-    "start": "parcel",
-    "build": "parcel build"
-  },
-  "devDependencies": {
-    "parcel": "^2.7.0"
+    "build": "browserify src/game.js -o public/js/bundle.js",
+    "watch": "watchify src/game.js -o public/js/bundle.js",
+    "serve": "serve public",
+    "start": "npm run watch & npm run serve"
   }
 }

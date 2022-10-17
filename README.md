@@ -8,13 +8,21 @@ castle could be found. Of course, these legends weren't true, but what if they w
 
 **This is a work in progress.**
 
-## Running the game
+## Setup
+
+```bash
+npm i -g serve
+npm i -g browserify
+npm i -g watchify
+```
+
+## Running in dev
 
 ```bash
 npm start
 ```
 
-## Bundling
+## Bundling for production
 
 ```bash
 npm run build
