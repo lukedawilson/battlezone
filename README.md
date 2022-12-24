@@ -1,10 +1,13 @@
 # battlezone
 Adaptation of the classic arcade game, Battlezone, written in JavaScript.
 
-Battlezone's (then) unique 3D environment inspired a number of
-[legends](http://www.recroom-amusements.com/aboutbattlezone.htm) amongst game-players,
-including the possibility to drive away from the battlefield and into the volcano, where a
-castle could be found. Of course, these legends weren't true, but what if they were?
+When Battlezone first hit arcades in 1980, punters had seen nothing like
+the game's open, seemingly endless 3D environment. Despite battlezone being
+a combat simulator, many were inspired to leave the battlefield behind
+and drive off towards the mountains in the distance. This spawned a number of
+[legends](http://www.recroom-amusements.com/aboutbattlezone.htm) amongst the players,
+including the possibility of exploring the volcano, where a castle could supposedly
+be found. Sadly, it seems these legends weren't true... Until now.
 
 **This is a work in progress.**
 
@@ -28,7 +31,7 @@ npm start
 npm run build
 ```
 
-Artefacts will appear in the `dist/` directory.
+Artefacts will appear in the `public/js` directory.
 
 ## Current state
 
