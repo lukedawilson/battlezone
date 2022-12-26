@@ -30,7 +30,7 @@ class Game {
     horizonGeometry.vertices.shift() // remove centre vertex
     horizonGeometry.rotateX(Math.PI / 2)
 
-    const horizon = this._buildShape(horizonGeometry, 0, 0)
+    const horizon = this._buildShape(horizonGeometry, 0, 0, true)
     this.scene.add(horizon)
 
     // Volcano
@@ -69,6 +69,32 @@ class Game {
     return pyramid
   }
 
+  pathBlocked(direction) {
+    const player = this.camera.position
+    const newPosition = new THREE.Vector3(
+      player.x + direction.x,
+      player.y,
+      player.z + direction.y) // camera is (x, y), shapes are (x, y, z)
+
+    const shapes = this.scene.children.filter(x => !!x.blocking)
+    for (const shape of shapes) {
+      const x1 = shape.position.x - 0.5
+      const x2 = shape.position.x + 0.5
+      const z1 = shape.position.z - 0.5
+      const z2 = shape.position.z + 0.5
+
+      const intersects =
+        newPosition.x >= x1 && newPosition.x <= x2 &&
+        newPosition.z >= z1 && newPosition.z <= z2
+
+      if (intersects) {
+        return true
+      }
+    }
+
+    return false
+  }
+
   gameLoop(refreshRateMs = 50) {
     setInterval(() => {
       this._render()
@@ -76,14 +102,14 @@ class Game {
   }
 
   _render() {
-    //requestAnimationFrame(sender._render(sender))
     this.renderer.render(this.scene, this.camera)
   }
 
-  _buildShape(geometry, x, z) {
+  _buildShape(geometry, x, z, isHorizon = false) {
     const edges = new THREE.EdgesGeometry(geometry)
     const material = new THREE.LineBasicMaterial({color: LIGHT_GREEN})
     const shape = new THREE.LineSegments(edges, material)
+    shape.blocking = !isHorizon
     shape.position.x = x
     shape.position.z = z
     return shape
@@ -98,7 +124,7 @@ class Game {
 
   _handleInput(sender, e) {
     const theta = sender.camera.rotation.y - Math.PI
-    const pos = sender._getPosVector(.1, theta)
+    let path = sender._getPosVector(.1, theta)
 
     if (sender.counter % 10 == 0) {
       sender.counter = 1
@@ -117,14 +143,17 @@ class Game {
       sender.counter ++
     }
 
+    let blocked
     switch(e.keyCode) {
       case 38: // up
-        sender.camera.position.x += pos.x
-        sender.camera.position.z += pos.y
-        break
       case 40: // down
-        sender.camera.position.x -= pos.x
-        sender.camera.position.z -= pos.y
+        if (e.keyCode === 40) path = new THREE.Vector3(-path.x, 0, -path.z)
+
+        blocked = sender.pathBlocked(path)
+        if (blocked) break
+
+        sender.camera.position.x += path.x
+        sender.camera.position.z += path.y
         break
       case 37: // left
         sender.camera.rotation.y += .1
@@ -133,7 +162,6 @@ class Game {
         sender.camera.rotation.y -= .1
         break
     }
-    console.log(`x: ${sender.camera.position.x}, y: ${sender.camera.position.y}, z: ${sender.camera.position.z}`)
   }
 }
 
