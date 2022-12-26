@@ -1,5 +1,4 @@
 const THREE = require('three')
-
 const LIGHT_GREEN = 0x00ff00
 
 class Game {
@@ -21,7 +20,7 @@ class Game {
     this.addHorizon()
 
     const self = this
-    document.onkeydown = e => self._handleInput(self, e)
+    document.onkeydown = e => handleInput(self, e)
   }
 
   addHorizon() {
@@ -30,7 +29,7 @@ class Game {
     horizonGeometry.vertices.shift() // remove centre vertex
     horizonGeometry.rotateX(Math.PI / 2)
 
-    const horizon = this._buildShape(horizonGeometry, 0, 0, true)
+    const horizon = buildShape(horizonGeometry, 0, 0, true)
     this.scene.add(horizon)
 
     // Volcano
@@ -39,7 +38,7 @@ class Game {
 
   addCube(x, z) {
     const geometry = new THREE.BoxGeometry(1, 1, 1)
-    const cube = this._buildShape(geometry, x, z)
+    const cube = buildShape(geometry, x, z)
     cube.rotation.y += 2
     this.scene.add(cube)
     return cube
@@ -63,7 +62,7 @@ class Game {
     const transformation = new THREE.Matrix4().makeScale(width, height, width)
     geometry.applyMatrix(transformation)
 
-    const pyramid = this._buildShape(geometry, x, z)
+    const pyramid = buildShape(geometry, x, z)
     pyramid.position.y = -0.5
     this.scene.add(pyramid)
     return pyramid
@@ -97,73 +96,72 @@ class Game {
 
   gameLoop(refreshRateMs = 50) {
     setInterval(() => {
-      this._render()
+      this.render()
     }, refreshRateMs)
   }
 
-  _render() {
+  render() {
     this.renderer.render(this.scene, this.camera)
   }
+}
 
-  _buildShape(geometry, x, z, isHorizon = false) {
-    const edges = new THREE.EdgesGeometry(geometry)
-    const material = new THREE.LineBasicMaterial({color: LIGHT_GREEN})
-    const shape = new THREE.LineSegments(edges, material)
-    shape.blocking = !isHorizon
-    shape.position.x = x
-    shape.position.z = z
-    return shape
+function buildShape(geometry, x, z, isHorizon = false) {
+  const edges = new THREE.EdgesGeometry(geometry)
+  const material = new THREE.LineBasicMaterial({color: LIGHT_GREEN})
+  const shape = new THREE.LineSegments(edges, material)
+  shape.blocking = !isHorizon
+  shape.position.x = x
+  shape.position.z = z
+  return shape
+}
+
+function getPosVector(d, theta) {
+  const hyp = d
+  const opp = hyp * Math.sin(theta)
+  const adj = hyp * Math.cos(theta)
+  return new THREE.Vector2(opp, adj)
+}
+
+function handleInput(sender, e) {
+  const theta = sender.camera.rotation.y - Math.PI
+  let path = getPosVector(.1, theta)
+
+  if (sender.counter % 10 == 0) {
+    sender.counter = 1
+
+    const theta2 = Math.random() * Math.PI * 2 + Math.PI
+    const pos2 = getPosVector(10, theta + theta2)
+    const x2 = sender.camera.position.x + pos2.x
+    const y2 = sender.camera.position.z + pos2.y
+
+    const shape = Math.random()
+    if (shape >= 0.5)
+      sender.addCube(x2, y2)
+    else
+      sender.addPyramid(x2, y2)
+  } else {
+    sender.counter ++
   }
 
-  _getPosVector(d, theta) {
-    const hyp = d
-    const opp = hyp * Math.sin(theta)
-    const adj = hyp * Math.cos(theta)
-    return new THREE.Vector2(opp, adj)
-  }
+  let blocked
+  switch(e.keyCode) {
+    case 38: // up
+    case 40: // down
+      if (e.keyCode === 40) path = new THREE.Vector3(-path.x, 0, -path.z)
 
-  _handleInput(sender, e) {
-    const theta = sender.camera.rotation.y - Math.PI
-    let path = sender._getPosVector(.1, theta)
+      blocked = sender.pathBlocked(path)
+      if (blocked) break
 
-    if (sender.counter % 10 == 0) {
-      sender.counter = 1
-
-      const theta2 = Math.random() * Math.PI * 2 + Math.PI
-      const pos2 = sender._getPosVector(10, theta + theta2)
-      const x2 = sender.camera.position.x + pos2.x
-      const y2 = sender.camera.position.z + pos2.y
-
-      const shape = Math.random()
-      if (shape >= 0.5)
-        sender.addCube(x2, y2)
-      else
-        sender.addPyramid(x2, y2)
-    } else {
-      sender.counter ++
-    }
-
-    let blocked
-    switch(e.keyCode) {
-      case 38: // up
-      case 40: // down
-        if (e.keyCode === 40) path = new THREE.Vector3(-path.x, 0, -path.z)
-
-        blocked = sender.pathBlocked(path)
-        if (blocked) break
-
-        sender.camera.position.x += path.x
-        sender.camera.position.z += path.y
-        break
-      case 37: // left
-        sender.camera.rotation.y += .1
-        break
-      case 39: // right
-        sender.camera.rotation.y -= .1
-        break
-    }
+      sender.camera.position.x += path.x
+      sender.camera.position.z += path.y
+      break
+    case 37: // left
+      sender.camera.rotation.y += .1
+      break
+    case 39: // right
+      sender.camera.rotation.y -= .1
+      break
   }
 }
 
 window.Game = Game
-
